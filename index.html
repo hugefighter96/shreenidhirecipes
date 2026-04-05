@@ -95,18 +95,31 @@ function toggleDeleteMode(){
 }
 
 function saveRecipe(){
-  const t=title.value.trim(),i=ingredients.value.trim(),s=steps.value.trim(),v=video.value.trim();
-  if(!t||!i||!s) return;
+  const t=document.getElementById('title').value.trim();
+  const i=document.getElementById('ingredients').value.trim();
+  const s=document.getElementById('steps').value.trim();
+  const v=document.getElementById('video').value.trim();
+
+  if(!t || !i || !s){
+    alert('Please fill all required fields');
+    return;
+  }
 
   if(editingId){
-    recipes=recipes.map(r=>r.id===editingId?{...r,title:t,ingredients:i,steps:s,video:v}:r);
-    editingId=null;
+    recipes = recipes.map(r => r.id===editingId ? {...r,title:t,ingredients:i,steps:s,video:v} : r);
+    editingId = null;
   } else {
     recipes.unshift({title:t,ingredients:i,steps:s,video:v,id:Date.now()+Math.random()});
   }
 
-  save();displayRecipes();
-  title.value=ingredients.value=steps.value=video.value='';
+  save();
+  displayRecipes();
+
+  document.getElementById('title').value='';
+  document.getElementById('ingredients').value='';
+  document.getElementById('steps').value='';
+  document.getElementById('video').value='';
+
   closeModal();
 }
 
@@ -119,10 +132,10 @@ function editRecipe(id){
   const r=recipes.find(x=>x.id===id);
   if(!r) return;
 
-  title.value=r.title;
-  ingredients.value=r.ingredients;
-  steps.value=r.steps;
-  video.value=r.video;
+  document.getElementById('title').value=r.title;
+  document.getElementById('ingredients').value=r.ingredients;
+  document.getElementById('steps').value=r.steps;
+  document.getElementById('video').value=r.video;
 
   editingId=id;
   openModal();
@@ -145,15 +158,19 @@ function deleteSelected(){
 }
 
 function displayRecipes(){
-  const q=search.value.toLowerCase();
+  const q=document.getElementById('search').value.toLowerCase();
   const el=document.getElementById('recipes');
   el.innerHTML='';
 
   recipes.filter(r=>r.title.toLowerCase().includes(q)).forEach(r=>{
     const v = r.video?`<iframe src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}" allowfullscreen></iframe>`:'';
 
+    let clickAction = '';
+    if(editMode) clickAction = `editRecipe(${r.id})`;
+    else if(!deleteMode) clickAction = `toggleDetails(${r.id})`;
+
     el.innerHTML+=`
-      <div class="card" onclick="${editMode?`editRecipe(${r.id})`:''}${!editMode&&!deleteMode?`toggleDetails(${r.id})`:''}">
+      <div class="card" onclick="${clickAction}">
         <div>${r.title}</div>
         <div class="details" id="details-${r.id}">
           <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
