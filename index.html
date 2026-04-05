@@ -96,12 +96,12 @@ const dietPlans = {
 
   async function loadRecipes(){
     console.log("LOADING RECIPES");
-  const snapshot = await fb.getDocs(collection(db,"recipes"));
+  const snapshot = await getDocs(collection(db,"recipes"));
   recipes = snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));
   displayRecipes();
 }
   async function deleteRecipe(id){
-  await fb.deleteDoc(fb.doc(db,"recipes",id));
+  await deleteDoc(doc(db,"recipes",id));
 }
 function loadDiet(){
   const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
@@ -159,7 +159,7 @@ async function saveRecipe(){
     return;
   }
 
-  await fb.addDoc(collection(db,"recipes"),{
+  await addDoc(collection(db,"recipes"),{
     title:t,
     ingredients:i,
     steps:s,
@@ -185,7 +185,7 @@ function toggleSelect(id){selected.has(id)?selected.delete(id):selected.add(id)}
 async function deleteSelected(){
   if(confirm('Delete?')){
     for(let id of selected){
-      await fb.deleteDoc(fb.doc(db,"recipes",id));
+      await deleteDoc(doc(db,"recipes",id));
     }
     selected.clear();
     deleteMode=false;
