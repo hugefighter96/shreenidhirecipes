@@ -230,8 +230,16 @@ if(editMode) click = `editRecipe('${r.id}')`;
 else if(!deleteMode) click = `toggleDetails('${r.id}')`;
 
     el.innerHTML+=`
-    <div class="card" onclick="${click}">
-      <div>${r.title}</div>
+<div class="card">
+  <div onclick="${
+    editMode 
+      ? `editRecipe('${r.id}')` 
+      : !deleteMode 
+        ? `toggleDetails('${r.id}')` 
+        : ''
+  }">
+    ${r.title}
+  </div>
       <div class="details" id="details-'${r.id}'">
         <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
         <p>${r.steps.replace(/\n/g,'<br>')}</p>
