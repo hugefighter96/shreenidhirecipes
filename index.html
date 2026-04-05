@@ -76,11 +76,18 @@ const dietPlans = {
 };
 
 function loadDiet(){
+  const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   const day = new Date().getDay();
   const diet = dietPlans[day];
 
   const el = document.getElementById('dietContent');
   el.innerHTML = `
+
+  <div class="meal">
+    <h2 style="text-align:center;color:#ff6b6b;margin-bottom:10px;">
+      📅 ${dayName}
+    </h2>
+  </div>
     <div class="meal"><h3>🌅 Early Morning(7-7:30 a.m.)</h3><p>${diet.m1}</p></div>
     <div class="meal"><h3>🍳 Breakfast(8:30-9:30 a.m.)</h3><p>${diet.m2}</p></div>
     <div class="meal"><h3>🍎 Mid-Morning(11-11:30 a.m.)</h3><p>${diet.m3}</p></div>
