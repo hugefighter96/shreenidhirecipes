@@ -145,8 +145,19 @@ window.toggleMenu=function(){const m=document.getElementById('menu');m.style.dis
 window.openModal=function(){document.getElementById('modal').style.display='flex';toggleMenu()}
 window.closeModal=function(){document.getElementById('modal').style.display='none'}
 
-window.toggleEditMode=function(){editMode=!editMode;deleteMode=false;displayRecipes();toggleMenu()}
-window.toggleDeleteMode=function(){deleteMode=!deleteMode;editMode=false;selected.clear();displayRecipes();toggleMenu()}
+window.toggleEditMode = function(){
+  editMode=!editMode;
+  deleteMode=false;
+  displayRecipes();
+  toggleMenu();
+}
+window.toggleDeleteMode = function(){
+  deleteMode=!deleteMode;
+  editMode=false;
+  selected.clear();
+  displayRecipes();
+  toggleMenu();
+}
 
 window.saveRecipe=async function(){
   const t = title.value.trim();
@@ -170,19 +181,22 @@ window.saveRecipe=async function(){
   closeModal();
   loadRecipes();
 }
-window.toggleDetails=function(id){
-  const el=document.getElementById('details-'+id);
-  el.style.display=el.style.display==='block'?'none':'block';
+window.toggleDetails = function(id){
+  const el = document.getElementById('details-'+id);
+  el.style.display = el.style.display==='block'?'none':'block';
 }
 
-window.editRecipe=function(id){
-  const r=recipes.find(x=>x.id===id);
-  title.value=r.title;ingredients.value=r.ingredients;steps.value=r.steps;video.value=r.video;
-  editingId=id;openModal();
+window.editRecipe = function(id){
+  const r = recipes.find(x=>x.id===id);
+  title.value=r.title;
+  ingredients.value=r.ingredients;
+  steps.value=r.steps;
+  video.value=r.video;
+  editingId=id;
+  openModal();
 }
-
 window.toggleSelect=function(id){selected.has(id)?selected.delete(id):selected.add(id)}
-window.deleteSelected=async function(){
+window.deleteSelected = async function(){
   if(confirm('Delete?')){
     for(let id of selected){
       await deleteDoc(doc(db,"recipes",id));
@@ -192,7 +206,6 @@ window.deleteSelected=async function(){
     loadRecipes();
   }
 }
-
 window.displayRecipes=function(){
   const q=search.value.toLowerCase();
   const el=document.getElementById('recipes');el.innerHTML='';
@@ -201,18 +214,18 @@ window.displayRecipes=function(){
     const v=r.video?`<iframe src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}"></iframe>`:'';
 
     let click='';
-    if(editMode)click=`editRecipe(${r.id})`;
-    else if(!deleteMode)click=`toggleDetails(${r.id})`;
+    if(editMode)click=`editRecipe('${r.id}')`;
+    else if(!deleteMode)click=`toggleDetails('${r.id}')`;
 
     el.innerHTML+=`
     <div class="card" onclick="${click}">
       <div>${r.title}</div>
-      <div class="details" id="details-${r.id}">
+      <div class="details" id="details-'${r.id}'">
         <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
         <p>${r.steps.replace(/\n/g,'<br>')}</p>
         ${v}
       </div>
-      ${deleteMode?`<input type="checkbox" onclick="event.stopPropagation();toggleSelect(${r.id})">`:''}
+      ${deleteMode?`<input type="checkbox" onclick="event.stopPropagation();toggleSelect('${r.id}')">`:''}
     </div>`;
   });
 
