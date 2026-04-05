@@ -67,7 +67,7 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } 
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } 
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -159,7 +159,7 @@ window.toggleDeleteMode = function(){
   toggleMenu();
 }
 
-window.saveRecipe=async function(){
+window.saveRecipe = async function(){
   const t = title.value.trim();
   const i = ingredients.value.trim();
   const s = steps.value.trim();
@@ -170,12 +170,24 @@ window.saveRecipe=async function(){
     return;
   }
 
-  await addDoc(collection(db,"recipes"),{
-    title:t,
-    ingredients:i,
-    steps:s,
-    video:v
-  });
+  if(editingId){
+    // ✅ UPDATE EXISTING
+    await updateDoc(doc(db, "recipes", editingId), {
+      title: t,
+      ingredients: i,
+      steps: s,
+      video: v
+    });
+    editingId = null;
+  } else {
+    // ✅ ADD NEW
+    await addDoc(collection(db,"recipes"), {
+      title: t,
+      ingredients: i,
+      steps: s,
+      video: v
+    });
+  }
 
   title.value = ingredients.value = steps.value = video.value = '';
   closeModal();
@@ -213,9 +225,9 @@ window.displayRecipes=function(){
   recipes.filter(r=>r.title.toLowerCase().includes(q)).forEach(r=>{
     const v=r.video?`<iframe src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}"></iframe>`:'';
 
-    let click='';
-    if(editMode)click=`editRecipe('${r.id}')`;
-    else if(!deleteMode)click=`toggleDetails('${r.id}')`;
+    let click = '';
+if(editMode) click = `editRecipe('${r.id}')`;
+else if(!deleteMode) click = `toggleDetails('${r.id}')`;
 
     el.innerHTML+=`
     <div class="card" onclick="${click}">
