@@ -13,8 +13,37 @@ header{padding:16px;text-align:center;font-weight:600;color:white;background:lin
 .tab{flex:1;padding:10px;border-radius:20px;background:white;text-align:center;cursor:pointer}
 .active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:white}
 .container{padding:12px 14px 80px;max-width:900px;margin:auto}
-.card{background:white;border-radius:20px;padding:14px;margin-bottom:10px;box-shadow:0 6px 20px rgba(0,0,0,.08);cursor:pointer}
-.details{display:none;margin-top:10px}
+.card{
+  background:white;
+  border-radius:20px;
+  padding:14px;
+  margin-bottom:10px;
+  box-shadow:0 6px 20px rgba(0,0,0,.08);
+  cursor:pointer;
+  transition: all 0.2s ease;
+}
+
+.card:hover{
+  transform: translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,.12);
+}
+
+.card:active{
+  transform: scale(0.98);
+}
+.details{
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+  margin-top: 0;
+}
+
+.details.show{
+  max-height: 500px;
+  opacity: 1;
+  margin-top: 10px;
+}
 .meal{background:white;border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
 .meal h3{margin:0 0 6px;color:var(--accent)}
 input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:14px;border:1px solid #ddd}
@@ -194,22 +223,18 @@ window.saveRecipe = async function(){
   loadRecipes();
 }
 window.toggleDetails = function(id){
-  console.log("CLICKED:", id); // debug
+  const all = document.querySelectorAll('.details');
 
-  const el = document.getElementById('details-' + id);
+  all.forEach(el => {
+    if(el.id !== 'details-' + id){
+      el.classList.remove('show');
+    }
+  });
 
-  if(!el){
-    console.log("NOT FOUND");
-    return;
-  }
+  const current = document.getElementById('details-' + id);
 
-  if(el.style.display === 'block'){
-    el.style.display = 'none';
-  } else {
-    el.style.display = 'block';
-  }
+  current.classList.toggle('show');
 }
-
 window.editRecipe = function(id){
   const r = recipes.find(x=>x.id===id);
   title.value=r.title;
@@ -240,12 +265,12 @@ window.displayRecipes=function(){
     el.innerHTML+=`
 <div class="card">
   <div onclick="${
-    editMode 
-      ? `editRecipe('${r.id}')` 
-      : !deleteMode 
-        ? `toggleDetails('${r.id}')` 
-        : ''
-  }">
+  editMode 
+    ? `editRecipe('${r.id}')` 
+    : !deleteMode 
+      ? `toggleDetails('${r.id}')` 
+      : ''
+}" style="font-weight:500;font-size:16px;">
     ${r.title}
   </div>
       <div class="details" id="details-${r.id}">
