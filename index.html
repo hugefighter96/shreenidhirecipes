@@ -6,29 +6,25 @@
   <title>Recipe Vault</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    body{margin:0;font-family:Poppins;background:#f8fafc;color:#1e293b}
-    header{position:sticky;top:0;padding:14px;text-align:center;background:#fff;font-weight:600;color:#ff7a18}
+    :root{--bg:linear-gradient(135deg,#fff7ed,#ecfeff);--accent:#ff7a18;--accent2:#32d2aa}
+    body{margin:0;font-family:Poppins;background:var(--bg)}
+    header{padding:14px;text-align:center;font-weight:600;color:var(--accent)}
     .container{padding:12px 14px 80px;max-width:900px;margin:auto}
 
-    .card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 8px 20px rgba(0,0,0,.08)}
-    .recipe h3{margin:0;color:#ff7a18}
+    .card{background:white;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 6px 15px rgba(0,0,0,.08);cursor:pointer}
+    .details{display:none;margin-top:10px}
 
     input,textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid #ddd}
 
-    #search{margin-bottom:10px}
+    .fab{position:fixed;bottom:16px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-size:28px;display:flex;align-items:center;justify-content:center}
 
-    .fab{position:fixed;bottom:16px;right:16px;width:60px;height:60px;border-radius:50%;background:#ff7a18;color:white;font-size:28px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-
-    .menu{position:fixed;bottom:90px;right:16px;background:white;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.15);display:none}
+    .menu{position:fixed;bottom:90px;right:16px;background:white;border-radius:12px;display:none}
     .menu div{padding:12px 16px;cursor:pointer}
-    .menu div:hover{background:#f1f5f9}
 
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.3);display:none;align-items:flex-end}
     .sheet{background:white;width:100%;padding:16px;border-radius:16px 16px 0 0}
 
     iframe{width:100%;height:200px;border-radius:10px;margin-top:8px}
-
-    .delete-box{margin-top:8px}
   </style>
 </head>
 <body>
@@ -36,36 +32,37 @@
 <header>🍲 Recipe Vault</header>
 
 <div class="container">
-  <input id="search" placeholder="🔍 Search recipes" oninput="displayRecipes()">
+  <input id="search" placeholder="🔍 Search" oninput="displayRecipes()">
   <div id="recipes"></div>
 </div>
 
 <div class="fab" onclick="toggleMenu()">＋</div>
 
 <div class="menu" id="menu">
-  <div onclick="openModal()">➕ Add Recipe</div>
+  <div onclick="openModal()">➕ Add</div>
+  <div onclick="toggleEditMode()">✏️ Edit Mode</div>
   <div onclick="toggleDeleteMode()">🗑️ Delete Mode</div>
 </div>
 
-<div class="modal" id="modal">
-  <div class="sheet">
-    <h3>Add Recipe</h3>
+<div class="modal" id="modal" onclick="closeModal()">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <h3>Add / Edit Recipe</h3>
     <input id="title" placeholder="Title">
     <textarea id="ingredients" placeholder="Ingredients"></textarea>
     <textarea id="steps" placeholder="Steps"></textarea>
     <input id="video" placeholder="YouTube link">
-    <button onclick="addRecipe()">Save</button>
+    <button onclick="saveRecipe()">Save</button>
   </div>
 </div>
 
 <script>
 let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+recipes = recipes.map(r => ({...r, id: r.id || Date.now()+Math.random()}));
 
-// ensure each recipe has unique id
-recipes = recipes.map(r => ({...r, id: r.id || Date.now() + Math.random()}));
-
-let deleteMode = false;
-let selected = new Set();
+let editMode=false;
+let deleteMode=false;
+let editingId=null;
+let selected=new Set();
 
 function save(){localStorage.setItem('recipes',JSON.stringify(recipes));}
 
@@ -79,32 +76,56 @@ function openModal(){
   toggleMenu();
 }
 
-function addRecipe(){
-  const t=title.value.trim(),i=ingredients.value.trim(),s=steps.value.trim(),v=video.value.trim();
-  if(!t||!i||!s) return;
-
-  recipes.unshift({title:t,ingredients:i,steps:s,video:v,id:Date.now()+Math.random()});
-  save();
-  displayRecipes();
-
-  title.value=ingredients.value=steps.value=video.value='';
+function closeModal(){
   document.getElementById('modal').style.display='none';
+}
+
+function toggleEditMode(){
+  editMode=!editMode;
+  deleteMode=false;
+  toggleMenu();
 }
 
 function toggleDeleteMode(){
   deleteMode=!deleteMode;
+  editMode=false;
   selected.clear();
   displayRecipes();
   toggleMenu();
 }
 
-function embed(url){
-  if(!url) return '';
-  let id='';
-  if(url.includes('watch?v=')) id=url.split('watch?v=')[1];
-  else if(url.includes('youtu.be/')) id=url.split('youtu.be/')[1];
-  if(id.includes('&')) id=id.split('&')[0];
-  return id?`https://www.youtube.com/embed/${id}`:'';
+function saveRecipe(){
+  const t=title.value.trim(),i=ingredients.value.trim(),s=steps.value.trim(),v=video.value.trim();
+  if(!t||!i||!s) return;
+
+  if(editingId){
+    recipes=recipes.map(r=>r.id===editingId?{...r,title:t,ingredients:i,steps:s,video:v}:r);
+    editingId=null;
+  } else {
+    recipes.unshift({title:t,ingredients:i,steps:s,video:v,id:Date.now()+Math.random()});
+  }
+
+  save();displayRecipes();
+  title.value=ingredients.value=steps.value=video.value='';
+  closeModal();
+}
+
+function toggleDetails(id){
+  const el=document.getElementById('details-'+id);
+  el.style.display = el.style.display==='block'?'none':'block';
+}
+
+function editRecipe(id){
+  const r=recipes.find(x=>x.id===id);
+  if(!r) return;
+
+  title.value=r.title;
+  ingredients.value=r.ingredients;
+  steps.value=r.steps;
+  video.value=r.video;
+
+  editingId=id;
+  openModal();
 }
 
 function toggleSelect(id){
@@ -114,8 +135,8 @@ function toggleSelect(id){
 
 function deleteSelected(){
   if(selected.size===0) return;
-  if(confirm('Delete selected recipes?')){
-    recipes = recipes.filter(r => !selected.has(r.id));
+  if(confirm('Delete selected?')){
+    recipes=recipes.filter(r=>!selected.has(r.id));
     save();
     selected.clear();
     deleteMode=false;
@@ -124,26 +145,27 @@ function deleteSelected(){
 }
 
 function displayRecipes(){
-  const q=document.getElementById('search').value.toLowerCase();
+  const q=search.value.toLowerCase();
   const el=document.getElementById('recipes');
   el.innerHTML='';
 
-  recipes
-    .filter(r=>r.title.toLowerCase().includes(q))
-    .forEach((r)=>{
-      const v=embed(r.video);
-      el.innerHTML+=`
-        <div class="card recipe">
-          <h3>${r.title}</h3>
-          <p><b>Ingredients</b><br>${r.ingredients.replace(/\n/g,'<br>')}</p>
-          <p><b>Steps</b><br>${r.steps.replace(/\n/g,'<br>')}</p>
-          ${v?`<iframe src="${v}" allowfullscreen></iframe>`:''}
-          ${deleteMode?`<div class="delete-box"><input type="checkbox" onclick="toggleSelect(${r.id})"> Select</div>`:''}
-        </div>`;
-    });
+  recipes.filter(r=>r.title.toLowerCase().includes(q)).forEach(r=>{
+    const v = r.video?`<iframe src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}" allowfullscreen></iframe>`:'';
+
+    el.innerHTML+=`
+      <div class="card" onclick="${editMode?`editRecipe(${r.id})`:''}${!editMode&&!deleteMode?`toggleDetails(${r.id})`:''}">
+        <div>${r.title}</div>
+        <div class="details" id="details-${r.id}">
+          <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
+          <p>${r.steps.replace(/\n/g,'<br>')}</p>
+          ${v}
+        </div>
+        ${deleteMode?`<input type="checkbox" onclick="event.stopPropagation();toggleSelect(${r.id})">`:''}
+      </div>`;
+  });
 
   if(deleteMode){
-    el.innerHTML += `<button onclick="deleteSelected()" style="width:100%;padding:12px;background:#ef4444;color:white;border:none;border-radius:12px">Delete Selected</button>`;
+    el.innerHTML+=`<button onclick="deleteSelected()" style="width:100%;padding:12px;background:red;color:white;border:none;border-radius:12px">Delete Selected</button>`;
   }
 }
 
