@@ -94,16 +94,16 @@ const dietPlans = {
   6:{m1:'lukewarm water with 4 soaked almonds + 1 soaked walnut',m2:'1 whole wheat pancake(no sugar) or masala oats with veggies',m3:'One fruit with 1 glass coconut water or with 1 glass lemon chia water.',m4:'1 bowl of watermelon and sprouts salad',m5:'1 cup tea / coffee with murmura chaat',m6:'salad + Besan or Moong dal cheela + chutney',m7:'Green tea with 4 almonds + 2 cashews'}
 };
 
-  async function loadRecipes(){
+  window.loadRecipes=async function(){
     console.log("LOADING RECIPES");
   const snapshot = await getDocs(collection(db,"recipes"));
   recipes = snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));
   displayRecipes();
 }
-  async function deleteRecipe(id){
+  window.deleteRecipe=async function(id){
   await deleteDoc(doc(db,"recipes",id));
 }
-function loadDiet(){
+window.loadDiet=function(){
   const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   const day = new Date().getDay();
   const diet = dietPlans[day];
@@ -130,7 +130,7 @@ function loadDiet(){
 
 let editMode=false, deleteMode=false, editingId=null, selected=new Set();
 
-function switchTab(tab,e){
+window.switchTab=function(tab,e){
   document.getElementById('recipesTab').style.display = tab==='recipes'?'block':'none';
   document.getElementById('dietTab').style.display = tab==='diet'?'block':'none';
 
@@ -141,14 +141,14 @@ function switchTab(tab,e){
 }
 
 
-function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block'}
-function openModal(){document.getElementById('modal').style.display='flex';toggleMenu()}
-function closeModal(){document.getElementById('modal').style.display='none'}
+window.toggleMenu=function(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block'}
+window.openModal=function(){document.getElementById('modal').style.display='flex';toggleMenu()}
+window.closeModal=function(){document.getElementById('modal').style.display='none'}
 
-function toggleEditMode(){editMode=!editMode;deleteMode=false;displayRecipes();toggleMenu()}
-function toggleDeleteMode(){deleteMode=!deleteMode;editMode=false;selected.clear();displayRecipes();toggleMenu()}
+window.toggleEditMode=function(){editMode=!editMode;deleteMode=false;displayRecipes();toggleMenu()}
+window.toggleDeleteMode=function(){deleteMode=!deleteMode;editMode=false;selected.clear();displayRecipes();toggleMenu()}
 
-async function saveRecipe(){
+window.saveRecipe=async function(){
   const t = title.value.trim();
   const i = ingredients.value.trim();
   const s = steps.value.trim();
@@ -170,19 +170,19 @@ async function saveRecipe(){
   closeModal();
   loadRecipes();
 }
-function toggleDetails(id){
+window.toggleDetails=function(id){
   const el=document.getElementById('details-'+id);
   el.style.display=el.style.display==='block'?'none':'block';
 }
 
-function editRecipe(id){
+window.editRecipe=function(id){
   const r=recipes.find(x=>x.id===id);
   title.value=r.title;ingredients.value=r.ingredients;steps.value=r.steps;video.value=r.video;
   editingId=id;openModal();
 }
 
-function toggleSelect(id){selected.has(id)?selected.delete(id):selected.add(id)}
-async function deleteSelected(){
+window.toggleSelect=function(id){selected.has(id)?selected.delete(id):selected.add(id)}
+window.deleteSelected=async function(){
   if(confirm('Delete?')){
     for(let id of selected){
       await deleteDoc(doc(db,"recipes",id));
@@ -193,7 +193,7 @@ async function deleteSelected(){
   }
 }
 
-function displayRecipes(){
+window.displayRecipes=function(){
   const q=search.value.toLowerCase();
   const el=document.getElementById('recipes');el.innerHTML='';
 
