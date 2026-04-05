@@ -237,20 +237,6 @@ window.displayRecipes=function(){
   recipes.filter(r=>r.title.toLowerCase().includes(q)).forEach(r=>{
     const v=r.video?`<iframe src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}"></iframe>`:'';
 
-el.innerHTML+=`
-<div class="card">
-  <div onclick="toggleDetails('${r.id}')">
-    ${r.title}
-  </div>
-
-  <div class="details" id="details-${r.id}">
-    <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
-    <p>${r.steps.replace(/\n/g,'<br>')}</p>
-    ${v}
-  </div>
-</div>
-`;
-
     el.innerHTML+=`
 <div class="card">
   <div onclick="${
