@@ -28,7 +28,7 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 </head>
 <body>
 
-<header>🍲 Recipe Vault</header>
+<header>THE SINGHAL DIET</header>
 
 <div class="tabs">
   <div class="tab active" onclick="switchTab('recipes',event)">Recipes</div>
@@ -66,13 +66,13 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 <script>
 // ===== DAILY DIET LOGIC =====
 const dietPlans = {
-  0:{m1:'Warm water + nuts',m2:'Poha + Milk',m3:'Fruit bowl',m4:'Roti + Sabzi + Dal',m5:'Buttermilk',m6:'Nuts / Snack',m7:'Khichdi'},
-  1:{m1:'Warm water',m2:'Oats + Banana',m3:'Fruit',m4:'Rice + Rajma',m5:'Buttermilk',m6:'Nuts',m7:'Soup'},
-  2:{m1:'Warm water',m2:'Upma',m3:'Fruit bowl',m4:'Roti + Paneer',m5:'Lassi',m6:'Snack',m7:'Dal + Rice'},
-  3:{m1:'Warm water',m2:'Idli',m3:'Fruit',m4:'Veg Pulao',m5:'Buttermilk',m6:'Nuts',m7:'Light Roti Sabzi'},
-  4:{m1:'Warm water',m2:'Paratha + Curd',m3:'Fruit',m4:'Dal Rice',m5:'Buttermilk',m6:'Snack',m7:'Soup'},
-  5:{m1:'Warm water',m2:'Sandwich',m3:'Fruit',m4:'Roti + Mix Veg',m5:'Buttermilk',m6:'Nuts',m7:'Khichdi'},
-  6:{m1:'Warm water',m2:'Dosa',m3:'Fruit',m4:'Rice + Sambar',m5:'Buttermilk',m6:'Snack',m7:'Light Dinner'}
+  0:{m1:'lukewarm water with 4 soaked almonds + 1 soaked walnut',m2:'1 stuffed roti with 1 small bowl curd(low fat)',m3:'One fruit with 1 glass coconut water or with 1 glass lemon chia water.',m4:'greek yogurt one cup with chopped fruits and nuts',m5:'1 cup tea / coffee with handful of roasted makhana',m6:'Cheat Meal/ one medium bowl red sauce pasta',m7:'Green tea with 4 almonds + 2 cashews'},
+  1:{m1:'lukewarm water with 4 soaked almonds + 1 soaked walnut',m2:'1 Katori vegetable poha with 1 glass milk / 1 glass buttermilk',m3:'One fruit with 1 glass coconut water or with 1 glass lemon chia water.',m4:'Salad + Moong dal Khichdi+ 1 small bowl curd',m5:'1 cup tea / coffee with handful of roasted makhana',m6:'Vegetable Soup + Moong Dal Chilla',m7:'Green tea with 4 almonds + 2 cashews'},
+  2:{m1:'lukewarm water with 4 soaked almonds + 1 soaked walnut',m2:'2 Ragi Idli with sauteed veggies with 1 glass milk / 1 glass buttermilk',m3:'One fruit with 1 glass coconut water or with 1 glass lemon chia water.',m4:'Salad + 1 chapatti with choice of veggies and one katori Dal',m5:'1 cup tea / coffee Handful of roasted chana',m6:'Vegetable Soup + Sauteed veggies + Paneer',m7:'Green tea with 4 almonds + 2 cashews'},
+  3:{m1:'lukewarm water with 4 soaked almonds + 1 soaked walnut',m2:'1 katori vegetable Upma with 1 glass milk / 1 glass buttermilk',m3:'One fruit with 1 glass coconut water or with 1 glass lemon chia water.',m4:'salad + 1 katori chana/rajma curry + 1 katori rice',m5:'1 cup tea / coffee 1 masala dal papad',m6:'Salad + 1 stuffed roti with chutney',m7:'Green tea with 4 almonds + 2 cashews'},
+  4:{m1:'lukewarm water with 4 soaked almonds + 1 soaked walnut',m2:'1 vegetable cheese Sandwich with 1 glass milk / 1 glass Buttermilk',m3:'One fruit with 1 glass coconut water or with 1 glass lemon chia water.',m4:'salad + 1 whole wheat Paneer wrap with lots of veggies and vinegar based dressing',m5:'1cup tea / coffee 1 cup popcorn ( without butter )',m6:'Moong Dal Chilla + Veggies',m7:'Green tea with 4 almonds + 2 cashews'},
+  5:{m1:'lukewarm water with 4 soaked almonds + 1 soaked walnut',m2:'paneer bhurji and 1 toast',m3:'One fruit with 1 glass coconut water or with 1 glass lemon chia water.',m4:'salad + Rajma chawal or Chana chawal',m5:'1 cup tea / coffee mango salsa dip 1-2 tbsp with 1 masala khakara',m6:'Home made chilly Paneer',m7:'Green tea with 4 almonds + 2 cashews'},
+  6:{m1:'lukewarm water with 4 soaked almonds + 1 soaked walnut',m2:'1 whole wheat pancake(no sugar) or masala oats with veggies',m3:'One fruit with 1 glass coconut water or with 1 glass lemon chia water.',m4:'1 bowl of watermelon and sprouts salad',m5:'1 cup tea / coffee with murmura chaat',m6:'salad + Besan or Moong dal cheela + chutney',m7:'Green tea with 4 almonds + 2 cashews'}
 };
 
 function loadDiet(){
@@ -81,13 +81,13 @@ function loadDiet(){
 
   const el = document.getElementById('dietContent');
   el.innerHTML = `
-    <div class="meal"><h3>🌅 Early Morning</h3><p>${diet.m1}</p></div>
-    <div class="meal"><h3>🍳 Breakfast</h3><p>${diet.m2}</p></div>
-    <div class="meal"><h3>🍎 Mid-Morning</h3><p>${diet.m3}</p></div>
-    <div class="meal"><h3>🥗 Lunch</h3><p>${diet.m4}</p></div>
-    <div class="meal"><h3>🥛 Post Lunch</h3><p>${diet.m5}</p></div>
-    <div class="meal"><h3>☕ Evening Snack</h3><p>${diet.m6}</p></div>
-    <div class="meal"><h3>🌙 Dinner</h3><p>${diet.m7}</p></div>
+    <div class="meal"><h3>🌅 Early Morning(7-7:30 a.m.)</h3><p>${diet.m1}</p></div>
+    <div class="meal"><h3>🍳 Breakfast(8:30-9:30 a.m.)</h3><p>${diet.m2}</p></div>
+    <div class="meal"><h3>🍎 Mid-Morning(11-11:30 a.m.)</h3><p>${diet.m3}</p></div>
+    <div class="meal"><h3>🥗 Lunch(1-2 p.m.)</h3><p>${diet.m4}</p></div>
+    <div class="meal"><h3>☕ Evening Snack(4:30-5:30 p.m.)</h3><p>${diet.m5}</p></div>
+    <div class="meal"><h3>🌙 Dinner(7:30-8:30 p.m.)</h3><p>${diet.m6}</p></div>
+    <div class="meal"><h3>🥛 Post Dinner(9:30-10 p.m.)</h3><p>${diet.m7}</p></div>
   `;;
 }
 
