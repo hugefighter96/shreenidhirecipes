@@ -28,28 +28,6 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 </head>
 <body>
 
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } 
-from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAzunMV9rrLgg1A4M_vq39PQkSin8kCP8Y",
-  authDomain: "the-singhal-diet.firebaseapp.com",
-  projectId: "the-singhal-diet",
-  storageBucket: "the-singhal-diet.firebasestorage.app",
-  messagingSenderId: "325179989865",
-  appId: "1:325179989865:web:3e850525d51dd9998867f8",
-  measurementId: "G-8GKQG148R5"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.db = db;
-window.fb = { collection, addDoc, getDocs, deleteDoc, doc };
-</script>
 
 <header>THE SINGHAL DIET</header>
 
@@ -86,7 +64,24 @@ window.fb = { collection, addDoc, getDocs, deleteDoc, doc };
   </div>
 </div>
 
-<script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } 
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "the-singhal-diet.firebaseapp.com",
+  projectId: "the-singhal-diet",
+  storageBucket: "the-singhal-diet.firebasestorage.app",
+  messagingSenderId: "325179989865",
+  appId: "1:325179989865:web:3e850525d51dd9998867f8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
     let recipes = [];
 // ===== DAILY DIET LOGIC =====
 const dietPlans = {
