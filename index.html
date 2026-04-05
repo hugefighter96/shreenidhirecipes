@@ -81,8 +81,9 @@ function closeModal(){
 }
 
 function toggleEditMode(){
-  editMode=!editMode;
-  deleteMode=false;
+  editMode = !editMode;
+  deleteMode = false;
+  displayRecipes(); // IMPORTANT: re-render so click behavior updates
   toggleMenu();
 }
 
