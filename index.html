@@ -1,47 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recipe Vault</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:linear-gradient(135deg,#fff7ed,#ecfeff);--accent:#ff7a18;--accent2:#32d2aa}
-    body{margin:0;font-family:Poppins;background:var(--bg)}
-    header{padding:14px;text-align:center;font-weight:600;color:var(--accent)}
-    .container{padding:12px 14px 80px;max-width:900px;margin:auto}
-
-    .card{background:white;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 6px 15px rgba(0,0,0,.08);cursor:pointer}
-    .details{display:none;margin-top:10px}
-
-    input,textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid #ddd}
-
-    .fab{position:fixed;bottom:16px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-size:28px;display:flex;align-items:center;justify-content:center}
-
-    .menu{position:fixed;bottom:90px;right:16px;background:white;border-radius:12px;display:none}
-    .menu div{padding:12px 16px;cursor:pointer}
-
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.3);display:none;align-items:flex-end}
-    .sheet{background:white;width:100%;padding:16px;border-radius:16px 16px 0 0}
-
-    iframe{width:100%;height:200px;border-radius:10px;margin-top:8px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:linear-gradient(135deg,#fff1eb,#e0f7fa,#e8f5e9);--accent:#ff6b6b;--accent2:#4facfe}
+body{margin:0;font-family:Poppins;background:var(--bg);color:#1e293b}
+header{padding:16px;text-align:center;font-weight:600;color:white;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:0 0 20px 20px}
+.tabs{display:flex;gap:10px;padding:10px}
+.tab{flex:1;padding:10px;border-radius:20px;background:white;text-align:center;cursor:pointer}
+.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:white}
+.container{padding:12px 14px 80px;max-width:900px;margin:auto}
+.card{background:white;border-radius:20px;padding:14px;margin-bottom:10px;box-shadow:0 6px 20px rgba(0,0,0,.08);cursor:pointer}
+.details{display:none;margin-top:10px}
+.meal{background:white;border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.meal h3{margin:0 0 6px;color:var(--accent)}
+input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:14px;border:1px solid #ddd}
+.fab{position:fixed;bottom:16px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-size:28px;display:flex;align-items:center;justify-content:center}
+.menu{position:fixed;bottom:90px;right:16px;background:white;border-radius:16px;display:none}
+.menu div{padding:12px 16px;cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.3);display:none;align-items:flex-end}
+.sheet{background:white;width:100%;padding:16px;border-radius:20px 20px 0 0}
+iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
+</style>
 </head>
 <body>
 
 <header>🍲 Recipe Vault</header>
 
-<div class="container">
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('recipes',event)">Recipes</div>
+  <div class="tab" onclick="switchTab('diet',event)">Today’s Diet</div>
+</div>
+
+<div id="recipesTab" class="container">
   <input id="search" placeholder="🔍 Search" oninput="displayRecipes()">
   <div id="recipes"></div>
+</div>
+
+<div id="dietTab" class="container" style="display:none">
+  <div id="dietContent"></div>
 </div>
 
 <div class="fab" onclick="toggleMenu()">＋</div>
 
 <div class="menu" id="menu">
   <div onclick="openModal()">➕ Add</div>
-  <div onclick="toggleEditMode()">✏️ Edit Mode</div>
-  <div onclick="toggleDeleteMode()">🗑️ Delete Mode</div>
+  <div onclick="toggleEditMode()">✏️ Edit</div>
+  <div onclick="toggleDeleteMode()">🗑️ Delete</div>
 </div>
 
 <div class="modal" id="modal" onclick="closeModal()">
@@ -56,135 +64,105 @@
 </div>
 
 <script>
+// ===== DAILY DIET LOGIC =====
+const dietPlans = {
+  0:{m1:'Warm water + nuts',m2:'Poha + Milk',m3:'Fruit bowl',m4:'Roti + Sabzi + Dal',m5:'Buttermilk',m6:'Nuts / Snack',m7:'Khichdi'},
+  1:{m1:'Warm water',m2:'Oats + Banana',m3:'Fruit',m4:'Rice + Rajma',m5:'Buttermilk',m6:'Nuts',m7:'Soup'},
+  2:{m1:'Warm water',m2:'Upma',m3:'Fruit bowl',m4:'Roti + Paneer',m5:'Lassi',m6:'Snack',m7:'Dal + Rice'},
+  3:{m1:'Warm water',m2:'Idli',m3:'Fruit',m4:'Veg Pulao',m5:'Buttermilk',m6:'Nuts',m7:'Light Roti Sabzi'},
+  4:{m1:'Warm water',m2:'Paratha + Curd',m3:'Fruit',m4:'Dal Rice',m5:'Buttermilk',m6:'Snack',m7:'Soup'},
+  5:{m1:'Warm water',m2:'Sandwich',m3:'Fruit',m4:'Roti + Mix Veg',m5:'Buttermilk',m6:'Nuts',m7:'Khichdi'},
+  6:{m1:'Warm water',m2:'Dosa',m3:'Fruit',m4:'Rice + Sambar',m5:'Buttermilk',m6:'Snack',m7:'Light Dinner'}
+};
+
+function loadDiet(){
+  const day = new Date().getDay();
+  const diet = dietPlans[day];
+
+  const el = document.getElementById('dietContent');
+  el.innerHTML = `
+    <div class="meal"><h3>🌅 Early Morning</h3><p>${diet.m1}</p></div>
+    <div class="meal"><h3>🍳 Breakfast</h3><p>${diet.m2}</p></div>
+    <div class="meal"><h3>🍎 Mid-Morning</h3><p>${diet.m3}</p></div>
+    <div class="meal"><h3>🥗 Lunch</h3><p>${diet.m4}</p></div>
+    <div class="meal"><h3>🥛 Post Lunch</h3><p>${diet.m5}</p></div>
+    <div class="meal"><h3>☕ Evening Snack</h3><p>${diet.m6}</p></div>
+    <div class="meal"><h3>🌙 Dinner</h3><p>${diet.m7}</p></div>
+  `;;
+}
+
+// ===== RECIPES LOGIC =====
 let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
 recipes = recipes.map(r => ({...r, id: r.id || Date.now()+Math.random()}));
 
-let editMode=false;
-let deleteMode=false;
-let editingId=null;
-let selected=new Set();
+let editMode=false, deleteMode=false, editingId=null, selected=new Set();
+
+function switchTab(tab,e){
+  document.getElementById('recipesTab').style.display = tab==='recipes'?'block':'none';
+  document.getElementById('dietTab').style.display = tab==='diet'?'block':'none';
+
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+
+  if(tab==='diet') loadDiet();
+}
 
 function save(){localStorage.setItem('recipes',JSON.stringify(recipes));}
+function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block'}
+function openModal(){document.getElementById('modal').style.display='flex';toggleMenu()}
+function closeModal(){document.getElementById('modal').style.display='none'}
 
-function toggleMenu(){
-  const m=document.getElementById('menu');
-  m.style.display = m.style.display==='block'?'none':'block';
-}
-
-function openModal(){
-  document.getElementById('modal').style.display='flex';
-  toggleMenu();
-}
-
-function closeModal(){
-  document.getElementById('modal').style.display='none';
-}
-
-function toggleEditMode(){
-  editMode = !editMode;
-  deleteMode = false;
-  displayRecipes(); // IMPORTANT: re-render so click behavior updates
-  toggleMenu();
-}
-
-function toggleDeleteMode(){
-  deleteMode=!deleteMode;
-  editMode=false;
-  selected.clear();
-  displayRecipes();
-  toggleMenu();
-}
+function toggleEditMode(){editMode=!editMode;deleteMode=false;displayRecipes();toggleMenu()}
+function toggleDeleteMode(){deleteMode=!deleteMode;editMode=false;selected.clear();displayRecipes();toggleMenu()}
 
 function saveRecipe(){
-  const t=document.getElementById('title').value.trim();
-  const i=document.getElementById('ingredients').value.trim();
-  const s=document.getElementById('steps').value.trim();
-  const v=document.getElementById('video').value.trim();
+  const t=title.value.trim(),i=ingredients.value.trim(),s=steps.value.trim(),v=video.value.trim();
+  if(!t||!i||!s)return alert('Fill all fields');
 
-  if(!t || !i || !s){
-    alert('Please fill all required fields');
-    return;
-  }
+  if(editingId){recipes=recipes.map(r=>r.id===editingId?{...r,title:t,ingredients:i,steps:s,video:v}:r);editingId=null}
+  else{recipes.unshift({title:t,ingredients:i,steps:s,video:v,id:Date.now()+Math.random()})}
 
-  if(editingId){
-    recipes = recipes.map(r => r.id===editingId ? {...r,title:t,ingredients:i,steps:s,video:v} : r);
-    editingId = null;
-  } else {
-    recipes.unshift({title:t,ingredients:i,steps:s,video:v,id:Date.now()+Math.random()});
-  }
-
-  save();
-  displayRecipes();
-
-  document.getElementById('title').value='';
-  document.getElementById('ingredients').value='';
-  document.getElementById('steps').value='';
-  document.getElementById('video').value='';
-
-  closeModal();
+  save();displayRecipes();title.value=ingredients.value=steps.value=video.value='';closeModal()
 }
 
 function toggleDetails(id){
   const el=document.getElementById('details-'+id);
-  el.style.display = el.style.display==='block'?'none':'block';
+  el.style.display=el.style.display==='block'?'none':'block';
 }
 
 function editRecipe(id){
   const r=recipes.find(x=>x.id===id);
-  if(!r) return;
-
-  document.getElementById('title').value=r.title;
-  document.getElementById('ingredients').value=r.ingredients;
-  document.getElementById('steps').value=r.steps;
-  document.getElementById('video').value=r.video;
-
-  editingId=id;
-  openModal();
+  title.value=r.title;ingredients.value=r.ingredients;steps.value=r.steps;video.value=r.video;
+  editingId=id;openModal();
 }
 
-function toggleSelect(id){
-  if(selected.has(id)) selected.delete(id);
-  else selected.add(id);
-}
-
-function deleteSelected(){
-  if(selected.size===0) return;
-  if(confirm('Delete selected?')){
-    recipes=recipes.filter(r=>!selected.has(r.id));
-    save();
-    selected.clear();
-    deleteMode=false;
-    displayRecipes();
-  }
-}
+function toggleSelect(id){selected.has(id)?selected.delete(id):selected.add(id)}
+function deleteSelected(){if(confirm('Delete?')){recipes=recipes.filter(r=>!selected.has(r.id));save();selected.clear();deleteMode=false;displayRecipes()}}
 
 function displayRecipes(){
-  const q=document.getElementById('search').value.toLowerCase();
-  const el=document.getElementById('recipes');
-  el.innerHTML='';
+  const q=search.value.toLowerCase();
+  const el=document.getElementById('recipes');el.innerHTML='';
 
   recipes.filter(r=>r.title.toLowerCase().includes(q)).forEach(r=>{
-    const v = r.video?`<iframe src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}" allowfullscreen></iframe>`:'';
+    const v=r.video?`<iframe src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}"></iframe>`:'';
 
-    let clickAction = '';
-    if(editMode) clickAction = `editRecipe(${r.id})`;
-    else if(!deleteMode) clickAction = `toggleDetails(${r.id})`;
+    let click='';
+    if(editMode)click=`editRecipe(${r.id})`;
+    else if(!deleteMode)click=`toggleDetails(${r.id})`;
 
     el.innerHTML+=`
-      <div class="card" onclick="${clickAction}">
-        <div>${r.title}</div>
-        <div class="details" id="details-${r.id}">
-          <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
-          <p>${r.steps.replace(/\n/g,'<br>')}</p>
-          ${v}
-        </div>
-        ${deleteMode?`<input type="checkbox" onclick="event.stopPropagation();toggleSelect(${r.id})">`:''}
-      </div>`;
+    <div class="card" onclick="${click}">
+      <div>${r.title}</div>
+      <div class="details" id="details-${r.id}">
+        <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
+        <p>${r.steps.replace(/\n/g,'<br>')}</p>
+        ${v}
+      </div>
+      ${deleteMode?`<input type="checkbox" onclick="event.stopPropagation();toggleSelect(${r.id})">`:''}
+    </div>`;
   });
 
-  if(deleteMode){
-    el.innerHTML+=`<button onclick="deleteSelected()" style="width:100%;padding:12px;background:red;color:white;border:none;border-radius:12px">Delete Selected</button>`;
-  }
+  if(deleteMode){el.innerHTML+=`<button onclick="deleteSelected()" style="width:100%;padding:12px;background:red;color:white;border:none;border-radius:14px">Delete Selected</button>`}
 }
 
 displayRecipes();
