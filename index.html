@@ -96,7 +96,7 @@ const dietPlans = {
 
   async function loadRecipes(){
     console.log("LOADING RECIPES");
-  const snapshot = await fb.getDocs(fb.collection(db,"recipes"));
+  const snapshot = await fb.getDocs(collection(db,"recipes"));
   recipes = snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));
   displayRecipes();
 }
@@ -159,7 +159,7 @@ async function saveRecipe(){
     return;
   }
 
-  await fb.addDoc(fb.collection(db,"recipes"),{
+  await fb.addDoc(collection(db,"recipes"),{
     title:t,
     ingredients:i,
     steps:s,
