@@ -276,9 +276,22 @@ window.displayRecipes=function(){
     ${r.title}
   </div>
       <div class="details" id="details-${r.id}">
-        <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
-        <p>${r.steps.replace(/\n/g,'<br>')}</p>
-        ${v}
+        <div style="margin-top:10px;">
+  <div style="font-weight:600;color:#ff6b6b;">🧾 Ingredients</div>
+  <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
+</div>
+
+<div style="margin-top:10px;">
+  <div style="font-weight:600;color:#4facfe;">📖 Instructions</div>
+  <p>${r.steps.replace(/\n/g,'<br>')}</p>
+</div>
+
+${r.video ? `
+<div style="margin-top:10px;">
+  <div style="font-weight:600;color:#10b981;">🎥 Video</div>
+  ${v}
+</div>
+` : ''}
       </div>
       ${deleteMode?`<input type="checkbox" onclick="event.stopPropagation();toggleSelect('${r.id}')">`:''}
     </div>`;
