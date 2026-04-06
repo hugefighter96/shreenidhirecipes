@@ -100,7 +100,33 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } 
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
+let currentUser = null;
+const ADMIN_EMAIL = "singhal.nirvaan10@gmail.com";
+<button onclick="login()">Admin Login</button>
+window.login = async function(){
+  const result = await signInWithPopup(auth, provider);
+  currentUser = result.user;
+
+  alert("Logged in as " + currentUser.email);
+  displayRecipes();
+}
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+
+  // Hide menu if not admin
+  const m = document.getElementById('menu');
+  if(!user || user.email !== ADMIN_EMAIL){
+    m.style.display = 'none';
+  }
+
+  displayRecipes();
+});
+  
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "the-singhal-diet.firebaseapp.com",
@@ -172,7 +198,16 @@ window.switchTab=function(tab,e){
 }
 
 
-window.toggleMenu=function(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block'}
+window.toggleMenu = function(){
+  const m = document.getElementById('menu');
+
+  // 🔐 Only show menu if admin
+  if(currentUser && currentUser.email === ADMIN_EMAIL){
+    m.style.display = m.style.display==='block' ? 'none' : 'block';
+  } else {
+    alert("Only admin can access this");
+  }
+}
 window.openModal=function(){document.getElementById('modal').style.display='flex';toggleMenu()}
 window.closeModal=function(){document.getElementById('modal').style.display='none'}
 
@@ -299,6 +334,37 @@ ${r.video ? `
 
   if(deleteMode){el.innerHTML+=`<button onclick="deleteSelected()" style="width:100%;padding:12px;background:red;color:white;border:none;border-radius:14px">Delete Selected</button>`}
 }
+  if(!currentUser || currentUser.email !== ADMIN_EMAIL){
+  alert("Only admin can add recipes");
+  return;
+}
+
+  if(currentUser.email !== ADMIN_EMAIL){
+  alert("Only admin can delete");
+  return;
+}
+
+  window.toggleEditMode = function(){
+  if(!currentUser || currentUser.email !== ADMIN_EMAIL){
+    alert("Admin only");
+    return;
+  }
+  editMode=!editMode;
+  deleteMode=false;
+  displayRecipes();
+}
+
+  window.toggleDeleteMode = function(){
+  if(!currentUser || currentUser.email !== ADMIN_EMAIL){
+    alert("Admin only");
+    return;
+  }
+  deleteMode=!deleteMode;
+  editMode=false;
+  selected.clear();
+  displayRecipes();
+}
+  
 
 displayRecipes();
   loadRecipes();
