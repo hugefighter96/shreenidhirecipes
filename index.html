@@ -75,6 +75,9 @@ header{
 .card:active{
   transform: scale(0.98);
 }
+.card div{
+  color:#1e293b !important;
+}
 .details{
   max-height: 0;
   overflow: hidden;
@@ -109,6 +112,7 @@ header{
 .meal h3{margin:0 0 6px;color:var(--accent)}
 input, textarea{
   width:100%;
+  box-sizing: border-box; /* 🔥 THIS FIXES OVERFLOW */
   padding:14px;
   margin:8px 0;
   border-radius:16px;
@@ -117,12 +121,14 @@ input, textarea{
   box-shadow:0 4px 12px rgba(0,0,0,0.08);
   font-family:Poppins;
   font-size:14px;
-  transition: all 0.2s ease;
+  resize: none; /* ❌ removes free-form resizing */
 }
 
-input:focus, textarea:focus{
-  outline:none;
-  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+textarea{
+  min-height:100px;
+}
+  .details *{
+  color:#1e293b !important;
 }
 .fab{
   position:fixed;
@@ -633,7 +639,7 @@ window.displayRecipes=function(){
     : !deleteMode 
       ? `toggleDetails('${r.id}')` 
       : ''
-}" style="font-weight:500;font-size:16px;">
+}" style="font-weight:600;font-size:16px;color:#1e293b;">
     ${r.title}
   </div>
       <div class="details" id="details-${r.id}">
