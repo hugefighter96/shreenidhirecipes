@@ -254,7 +254,7 @@ iframe{
     <input id="title" placeholder="Title">
     <textarea id="ingredients" placeholder="Ingredients"></textarea>
     <textarea id="steps" placeholder="Steps"></textarea>
-    <input id="video" placeholder="YouTube link">
+   <input id="video" placeholder="YouTube links (comma separated)">
     <button onclick="saveRecipe()">Save</button>
   </div>
 </div>
@@ -542,7 +542,7 @@ window.saveRecipe = async function(){
   const t = title.value.trim();
   const i = ingredients.value.trim();
   const s = steps.value.trim();
-  const v = video.value.trim();
+  const v = video.value.trim().split(',').map(x=>x.trim()).filter(x=>x);
 
   if(!t || !i || !s){
     alert('Fill all fields');
@@ -555,7 +555,7 @@ window.saveRecipe = async function(){
       title: t,
       ingredients: i,
       steps: s,
-      video: v
+      videos: v
     });
     editingId = null;
   } else {
@@ -634,13 +634,24 @@ window.displayRecipes=function(){
   const el=document.getElementById('recipes');el.innerHTML='';
 
   recipes.filter(r=>r.title.toLowerCase().includes(q)).forEach(r=>{
-  const v = r.video ? `
-<iframe 
-  src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}" 
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-  allowfullscreen
-  onclick="event.stopPropagation()"
-></iframe>` : '';
+  let v = '';
+
+if(r.videos && r.videos.length){
+  v = r.videos.map(link => {
+    const id = link.includes('v=') 
+      ? link.split('v=')[1] 
+      : link.split('/').pop();
+
+    return `
+      <iframe 
+        src="https://www.youtube.com/embed/${id}" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen
+        onclick="event.stopPropagation()"
+      ></iframe>
+    `;
+  }).join('');
+}
     el.innerHTML+=`
 <div class="card">
   <div onclick="${
@@ -663,9 +674,9 @@ window.displayRecipes=function(){
   <p>${r.steps.replace(/\n/g,'<br>')}</p>
 </div>
 
-${r.video ? `
+${v ? `
 <div style="margin-top:10px;">
-  <div style="font-weight:600;color:#10b981;">🎥 Video</div>
+  <div style="font-weight:600;color:#10b981;">🎥 Videos</div>
   ${v}
 </div>
 ` : ''}
