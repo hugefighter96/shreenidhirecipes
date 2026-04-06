@@ -348,7 +348,7 @@ window.saveRecipe = async function(){
   closeModal();
   loadRecipes();
 }
-wwindow.toggleDetails = function(id){
+window.toggleDetails = function(id){
   const el = document.getElementById('details-' + id);
 
   if(el.classList.contains('show')){
@@ -358,11 +358,6 @@ wwindow.toggleDetails = function(id){
     el.classList.add('show');
     el.style.maxHeight = el.scrollHeight + "px";
   }
-}
-
-  const current = document.getElementById('details-' + id);
-
-  current.classList.toggle('show');
 }
 window.editRecipe = function(id){
   const r = recipes.find(x=>x.id===id);
