@@ -273,14 +273,17 @@ window.saveRecipe = async function(){
   closeModal();
   loadRecipes();
 }
-window.toggleDetails = function(id){
-  const all = document.querySelectorAll('.details');
+wwindow.toggleDetails = function(id){
+  const el = document.getElementById('details-' + id);
 
-  all.forEach(el => {
-    if(el.id !== 'details-' + id){
-      el.classList.remove('show');
-    }
-  });
+  if(el.classList.contains('show')){
+    el.style.maxHeight = '0px';
+    el.classList.remove('show');
+  } else {
+    el.classList.add('show');
+    el.style.maxHeight = el.scrollHeight + "px";
+  }
+}
 
   const current = document.getElementById('details-' + id);
 
