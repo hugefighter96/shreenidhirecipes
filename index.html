@@ -249,7 +249,7 @@ iframe{
 </div>
 
 <div class="modal" id="modal" onclick="closeModal()">
-  <div class="sheet" onclick="event.stopPropagation()">
+  <div class="sheet" >
     <h3>Add / Edit Recipe</h3>
     <input id="title" placeholder="Title">
     <textarea id="ingredients" placeholder="Ingredients"></textarea>
@@ -259,7 +259,7 @@ iframe{
   </div>
 </div>
   <div class="modal" id="adminModal" onclick="closeAdminPanel()">
-  <div class="sheet" onclick="event.stopPropagation()">
+  <div class="sheet" >
   <h3 style="text-align:center;">👥 Admin Panel</h3>
 
   <div style="
@@ -647,7 +647,7 @@ if(r.videos && r.videos.length){
         src="https://www.youtube.com/embed/${id}" 
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
         allowfullscreen
-        onclick="event.stopPropagation()"
+        
       ></iframe>
     `;
   }).join('');
@@ -663,7 +663,7 @@ if(r.videos && r.videos.length){
 }" style="font-weight:600;font-size:16px;color:#1e293b;">
     ${r.title}
   </div>
-      <div class="details" id="details-${r.id}">
+      <div class="details" id="details-${r.id}"  ontouchstart="event.stopPropagation()">
         <div style="margin-top:10px;">
   <div style="font-weight:600;color:#ff6b6b;">🧾 Ingredients</div>
   <p>${r.ingredients.replace(/\n/g,'<br>')}</p>
@@ -676,7 +676,7 @@ if(r.videos && r.videos.length){
 
 ${v ? `
 <div style="margin-top:10px;">
-  <div style="font-weight:600;color:#10b981;">🎥 Videos</div>
+  <div  ontouchstart="event.stopPropagation()">
   ${v}
 </div>
 ` : ''}
