@@ -634,13 +634,13 @@ window.displayRecipes=function(){
   const el=document.getElementById('recipes');el.innerHTML='';
 
   recipes.filter(r=>r.title.toLowerCase().includes(q)).forEach(r=>{
-   const v = r.video ? `
+  const v = r.video ? `
 <iframe 
   src="https://www.youtube.com/embed/${r.video.split('v=')[1]||r.video.split('/').pop()}" 
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
   allowfullscreen
+  onclick="event.stopPropagation()"
 ></iframe>` : '';
-
     el.innerHTML+=`
 <div class="card">
   <div onclick="${
