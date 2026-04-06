@@ -147,7 +147,7 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } 
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc }
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } 
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
@@ -261,9 +261,7 @@ window.closeAdminPanel = function(){
     `;
   }
 }
-  function isAdmin(){
-  return currentUser && ADMINS.includes(currentUser.email);
-}
+ 
   window.logout = async function(){
   await signOut(auth);
   currentUser = null;
@@ -278,11 +276,12 @@ window.login = async function(){
   alert("Logged in as " + currentUser.email);
   displayRecipes();
 }
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   currentUser = user;
-  await fetchAdmins();
 
-  updateUserUI(); // 👈 ADD THIS
+  await fetchAdmins(); // ✅ now valid
+
+  updateUserUI();
 
   const m = document.getElementById('menu');
   if(!isAdmin()){
@@ -355,7 +354,7 @@ window.toggleMenu = function(){
   const m = document.getElementById('menu');
 
   // 🔐 Only show menu if admin
-  if(currentUser && currentUser.email === ADMIN_EMAIL){
+  if(isAdmin()){
     m.style.display = m.style.display==='block' ? 'none' : 'block';
   } else {
     alert("Only admin can access this");
