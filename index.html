@@ -117,6 +117,7 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 <div class="fab" onclick="toggleMenu()">＋</div>
 
 <div class="menu" id="menu">
+  <div onclick="openAdminPanel()">👥 Admin Panel</div>
   <div onclick="openModal()">➕ Add</div>
   <div onclick="toggleEditMode()">✏️ Edit</div>
   <div onclick="toggleDeleteMode()">🗑️ Delete</div>
@@ -132,6 +133,16 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
     <button onclick="saveRecipe()">Save</button>
   </div>
 </div>
+  <div class="modal" id="adminModal" onclick="closeAdminPanel()">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <h3>👥 Admin Panel</h3>
+
+    <input id="newAdminEmail" placeholder="Enter admin email">
+    <button onclick="addAdmin()">Add Admin</button>
+
+    <div id="adminList" style="margin-top:15px;"></div>
+  </div>
+</div>
 
 <script type="module">
 
@@ -142,11 +153,16 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signO
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 let currentUser = null;
-const ADMINS = [
-  "singhal.nirvaan10@gmail.com",
-  "singhal.nidhi31@gmail.com",
-  "nid.s2727@gmail.com"
-];
+let admins = [];
+
+async function fetchAdmins(){
+  const snapshot = await getDocs(collection(db,"admins"));
+  admins = snapshot.docs.map(doc=>doc.id);
+}
+
+function isAdmin(){
+  return currentUser && admins.includes(currentUser.email);
+}
 
   
 const firebaseConfig = {
@@ -162,6 +178,51 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+window.openAdminPanel = function(){
+  document.getElementById('adminModal').style.display = 'flex';
+  loadAdmins();
+}
+
+window.closeAdminPanel = function(){
+  document.getElementById('adminModal').style.display = 'none';
+}
+  async function loadAdmins(){
+  const snapshot = await getDocs(collection(db,"admins"));
+  const el = document.getElementById('adminList');
+  el.innerHTML = '';
+
+  snapshot.forEach(docSnap=>{
+    const email = docSnap.id;
+
+    el.innerHTML += `
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        padding:8px;
+        background:#f1f5f9;
+        border-radius:10px;
+        margin-bottom:6px;
+      ">
+        <span>${email}</span>
+        <button onclick="removeAdmin('${email}')">❌</button>
+      </div>
+    `;
+  });
+}
+  window.addAdmin = async function(){
+  const email = document.getElementById('newAdminEmail').value.trim();
+
+  if(!email) return;
+
+  await setDoc(doc(db,"admins",email), { email });
+
+  document.getElementById('newAdminEmail').value = '';
+  loadAdmins();
+}
+  window.removeAdmin = async function(email){
+  await deleteDoc(doc(db,"admins",email));
+  loadAdmins();
+}
   function updateUserUI(){
   const el = document.getElementById('userSection');
 
@@ -219,6 +280,7 @@ window.login = async function(){
 }
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
+  await fetchAdmins();
 
   updateUserUI(); // 👈 ADD THIS
 
