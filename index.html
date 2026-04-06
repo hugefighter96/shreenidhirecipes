@@ -106,6 +106,21 @@ from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 let currentUser = null;
 const ADMIN_EMAIL = "singhal.nirvaan10@gmail.com";
+
+  
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "the-singhal-diet.firebaseapp.com",
+  projectId: "the-singhal-diet",
+  storageBucket: "the-singhal-diet.firebasestorage.app",
+  messagingSenderId: "325179989865",
+  appId: "1:325179989865:web:3e850525d51dd9998867f8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 window.login = async function(){
   const result = await signInWithPopup(auth, provider);
   currentUser = result.user;
@@ -124,20 +139,6 @@ onAuthStateChanged(auth, (user) => {
 
   displayRecipes();
 });
-  
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "the-singhal-diet.firebaseapp.com",
-  projectId: "the-singhal-diet",
-  storageBucket: "the-singhal-diet.firebasestorage.app",
-  messagingSenderId: "325179989865",
-  appId: "1:325179989865:web:3e850525d51dd9998867f8"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
 
     let recipes = [];
@@ -213,33 +214,20 @@ window.openModal=function(){document.getElementById('modal').style.display='flex
 window.closeModal=function(){document.getElementById('modal').style.display='none'}
 
 window.toggleEditMode = function(){
-  window.toggleEditMode = function(){
   if(!currentUser || currentUser.email !== ADMIN_EMAIL){
     alert("Admin only");
     return;
   }
-  editMode=!editMode;
-  deleteMode=false;
-  displayRecipes();
-  toggleMenu();
-}
   editMode=!editMode;
   deleteMode=false;
   displayRecipes();
   toggleMenu();
 }
 window.toggleDeleteMode = function(){
-  window.toggleDeleteMode = function(){
   if(!currentUser || currentUser.email !== ADMIN_EMAIL){
     alert("Admin only");
     return;
   }
-  deleteMode=!deleteMode;
-  editMode=false;
-  selected.clear();
-  displayRecipes();
-  toggleMenu();
-}
   deleteMode=!deleteMode;
   editMode=false;
   selected.clear();
