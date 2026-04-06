@@ -52,14 +52,21 @@ header{padding:16px;text-align:center;font-weight:600;color:white;background:lin
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: all 0.4s ease;
+  transform: translateY(-5px);
+  transition: 
+    max-height 0.45s cubic-bezier(.4,0,.2,1),
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .details.show{
-  max-height: 2000px; /* big enough */
-  overflow-y: auto;   /* enable scroll */
   opacity: 1;
-  margin-top: 10px;
+  transform: translateY(0);
+}
+.card.active{
+  border:2px solid #ff6b6b;
+  box-shadow:0 12px 30px rgba(0,0,0,0.15);
+  transform: scale(1.01);
 }
 .meal{background:white;border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
 .meal h3{margin:0 0 6px;color:var(--accent)}
@@ -349,23 +356,36 @@ window.saveRecipe = async function(){
   loadRecipes();
 }
 window.toggleDetails = function(id){
-  const all = document.querySelectorAll('.details');
+  const allDetails = document.querySelectorAll('.details');
+  const allCards = document.querySelectorAll('.card');
 
-  all.forEach(el => {
+  // Close all others
+  allDetails.forEach(el => {
     if(el.id !== 'details-' + id){
-      el.classList.remove('show');
       el.style.maxHeight = '0px';
+      el.classList.remove('show');
     }
   });
 
+  allCards.forEach(card => card.classList.remove('active'));
+
   const current = document.getElementById('details-' + id);
+  const currentCard = current.closest('.card');
 
   if(current.classList.contains('show')){
-    current.classList.remove('show');
     current.style.maxHeight = '0px';
+    current.classList.remove('show');
+    currentCard.classList.remove('active');
   } else {
     current.classList.add('show');
     current.style.maxHeight = current.scrollHeight + "px";
+    currentCard.classList.add('active');
+
+    // 📜 Smooth scroll into view
+    currentCard.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
   }
 }
 window.editRecipe = function(id){
