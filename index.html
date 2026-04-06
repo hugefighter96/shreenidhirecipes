@@ -349,14 +349,23 @@ window.saveRecipe = async function(){
   loadRecipes();
 }
 window.toggleDetails = function(id){
-  const el = document.getElementById('details-' + id);
+  const all = document.querySelectorAll('.details');
 
-  if(el.classList.contains('show')){
-    el.style.maxHeight = '0px';
-    el.classList.remove('show');
+  all.forEach(el => {
+    if(el.id !== 'details-' + id){
+      el.classList.remove('show');
+      el.style.maxHeight = '0px';
+    }
+  });
+
+  const current = document.getElementById('details-' + id);
+
+  if(current.classList.contains('show')){
+    current.classList.remove('show');
+    current.style.maxHeight = '0px';
   } else {
-    el.classList.add('show');
-    el.style.maxHeight = el.scrollHeight + "px";
+    current.classList.add('show');
+    current.style.maxHeight = current.scrollHeight + "px";
   }
 }
 window.editRecipe = function(id){
