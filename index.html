@@ -75,7 +75,18 @@ input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:14px;border:1p
 .menu{position:fixed;bottom:90px;right:16px;background:white;border-radius:16px;display:none}
 .menu div{padding:12px 16px;cursor:pointer}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.3);display:none;align-items:flex-end}
-.sheet{background:white;width:100%;padding:16px;border-radius:20px 20px 0 0}
+.sheet{
+  background:white;
+  width:100%;
+  padding:16px;
+  border-radius:20px 20px 0 0;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
 iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 .admin-btn{
   display:inline-block;
@@ -91,6 +102,10 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
   cursor:pointer;
   box-shadow:0 6px 15px rgba(0,0,0,0.1);
   transition: all 0.25s ease;
+}
+#adminList div:hover{
+  transform: translateY(-2px);
+  box-shadow:0 10px 20px rgba(0,0,0,0.12);
 }
 </style>
 </head>
@@ -135,13 +150,24 @@ iframe{width:100%;height:200px;border-radius:14px;margin-top:8px}
 </div>
   <div class="modal" id="adminModal" onclick="closeAdminPanel()">
   <div class="sheet" onclick="event.stopPropagation()">
-    <h3>👥 Admin Panel</h3>
+  <h3 style="text-align:center;">👥 Admin Panel</h3>
 
+  <div style="
+    background:#f8fafc;
+    padding:12px;
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom:12px;
+  ">
     <input id="newAdminEmail" placeholder="Enter admin email">
-    <button onclick="addAdmin()">Add Admin</button>
 
-    <div id="adminList" style="margin-top:15px;"></div>
+    <button class="admin-btn" onclick="addAdmin()" style="width:100%;margin-top:8px;">
+      ➕ Add Admin
+    </button>
   </div>
+
+  <div id="adminList"></div>
+</div>
 </div>
 
 <script type="module">
@@ -194,19 +220,32 @@ window.closeAdminPanel = function(){
   snapshot.forEach(docSnap=>{
     const email = docSnap.id;
 
-    el.innerHTML += `
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        padding:8px;
-        background:#f1f5f9;
-        border-radius:10px;
-        margin-bottom:6px;
-      ">
-        <span>${email}</span>
-        <button onclick="removeAdmin('${email}')">❌</button>
-      </div>
-    `;
+  el.innerHTML += `
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px;
+    background:white;
+    border-radius:16px;
+    margin-bottom:10px;
+    box-shadow:0 6px 15px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+  ">
+    <span style="font-weight:500;">${email}</span>
+
+    <button onclick="removeAdmin('${email}')" style="
+      background:linear-gradient(135deg,#ff6b6b,#ff3b3b);
+      color:white;
+      border:none;
+      border-radius:12px;
+      padding:6px 10px;
+      cursor:pointer;
+    ">
+      ❌
+    </button>
+  </div>
+`;
   });
 }
   window.addAdmin = async function(){
