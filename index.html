@@ -142,7 +142,11 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signO
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 let currentUser = null;
-const ADMIN_EMAIL = "singhal.nirvaan10@gmail.com";
+const ADMINS = [
+  "singhal.nirvaan10@gmail.com",
+  "singhal.nidhi31@gmail.com",
+  "nid.s2727@gmail.com"
+];
 
   
 const firebaseConfig = {
@@ -196,6 +200,9 @@ const provider = new GoogleAuthProvider();
     `;
   }
 }
+  function isAdmin(){
+  return currentUser && ADMINS.includes(currentUser.email);
+}
   window.logout = async function(){
   await signOut(auth);
   currentUser = null;
@@ -216,7 +223,7 @@ onAuthStateChanged(auth, (user) => {
   updateUserUI(); // 👈 ADD THIS
 
   const m = document.getElementById('menu');
-  if(!user || user.email !== ADMIN_EMAIL){
+  if(!isAdmin()){
     m.style.display = 'none';
   }
 
@@ -296,7 +303,7 @@ window.openModal=function(){document.getElementById('modal').style.display='flex
 window.closeModal=function(){document.getElementById('modal').style.display='none'}
 
 window.toggleEditMode = function(){
-  if(!currentUser || currentUser.email !== ADMIN_EMAIL){
+  if(!isAdmin()){
     alert("Admin only");
     return;
   }
@@ -306,7 +313,7 @@ window.toggleEditMode = function(){
   toggleMenu();
 }
 window.toggleDeleteMode = function(){
-  if(!currentUser || currentUser.email !== ADMIN_EMAIL){
+  if(!isAdmin()){
     alert("Admin only");
     return;
   }
@@ -318,7 +325,7 @@ window.toggleDeleteMode = function(){
 }
 
 window.saveRecipe = async function(){
-  if(!currentUser || currentUser.email !== ADMIN_EMAIL){
+  if(!isAdmin()){
   alert("Only admin can add recipes");
   return;
 }
@@ -399,7 +406,7 @@ window.editRecipe = function(id){
 }
 window.toggleSelect=function(id){selected.has(id)?selected.delete(id):selected.add(id)}
 window.deleteSelected = async function(){
-  if(!currentUser || currentUser.email !== ADMIN_EMAIL){
+  if(!isAdmin()){
   alert("Only admin can delete");
   return;
 }
