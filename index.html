@@ -249,7 +249,7 @@ iframe{
 </div>
 
 <div class="modal" id="modal" onclick="closeModal()">
-  <div class="sheet" >
+  <div class="sheet" onclick="event.stopPropagation()">
     <h3>Add / Edit Recipe</h3>
     <input id="title" placeholder="Title">
     <textarea id="ingredients" placeholder="Ingredients"></textarea>
@@ -259,7 +259,7 @@ iframe{
   </div>
 </div>
   <div class="modal" id="adminModal" onclick="closeAdminPanel()">
-  <div class="sheet" >
+  <div class="sheet" onclick="event.stopPropagation()">
   <h3 style="text-align:center;">👥 Admin Panel</h3>
 
   <div style="
@@ -676,7 +676,7 @@ if(r.videos && r.videos.length){
 
 ${v ? `
 <div style="margin-top:10px;">
-  <div  ontouchstart="event.stopPropagation()">
+  <div onclick="event.stopPropagation()" ontouchstart="event.stopPropagation()">
   ${v}
 </div>
 ` : ''}
