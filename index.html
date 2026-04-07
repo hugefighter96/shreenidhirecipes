@@ -693,19 +693,25 @@ ${v ? `
 displayRecipes();
   loadRecipes();
   updateUserUI(); // 👈 ADD THIS LINE
-  document.addEventListener('click', function(e){
-  if(!e.target.closest('.card')){
-    document.querySelectorAll('.details').forEach(el=>{
-      el.classList.remove('show');
-      el.style.maxHeight = '0px';
-    });
-    document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+document.addEventListener('click', function(e){
+
+  // ❌ Ignore clicks inside cards OR modals
+  if(
+    e.target.closest('.card') || 
+    e.target.closest('.modal') ||
+    e.target.closest('.menu')
+  ){
+    return;
   }
+
+  // ✅ Close all recipes
+  document.querySelectorAll('.details').forEach(el=>{
+    el.classList.remove('show');
+    el.style.maxHeight = '0px';
+  });
+
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
 });
-  if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log('Service Worker Registered'));
-}
 </script>
 
 </body>
