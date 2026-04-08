@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HF96 Specials</title>
+<script async src="//www.instagram.com/embed.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   .details, 
@@ -638,18 +639,34 @@ window.displayRecipes=function(){
 
 if(r.videos && r.videos.length){
   v = r.videos.map(link => {
-    const id = link.includes('v=') 
-      ? link.split('v=')[1] 
-      : link.split('/').pop();
 
-    return `
-      <iframe 
-        src="https://www.youtube.com/embed/${id}" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen
-        
-      ></iframe>
-    `;
+    // 🎬 YouTube
+    if(link.includes('youtube') || link.includes('youtu.be')){
+      const id = link.includes('v=') 
+        ? link.split('v=')[1] 
+        : link.split('/').pop();
+
+      return `
+        <iframe 
+          src="https://www.youtube.com/embed/${id}" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen
+        ></iframe>
+      `;
+    }
+
+    // 📸 Instagram Reel
+    if(link.includes('instagram.com')){
+      return `
+        <blockquote 
+          class="instagram-media" 
+          data-instgrm-permalink="${link}" 
+          style="background:white; border-radius:16px; margin-top:10px;">
+        </blockquote>
+      `;
+    }
+
+    return '';
   }).join('');
 }
     el.innerHTML+=`
@@ -686,6 +703,9 @@ ${v ? `
   });
 
   if(deleteMode){el.innerHTML+=`<button onclick="deleteSelected()" style="width:100%;padding:12px;background:red;color:white;border:none;border-radius:14px">Delete Selected</button>`}
+}
+  if(window.instgrm){
+  window.instgrm.Embeds.process();
 }
 
   
